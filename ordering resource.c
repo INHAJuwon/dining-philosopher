@@ -25,12 +25,12 @@ void* philosopher(void* arg){
 	int philosopher_num;
 	philosopher_num=(unsigned long int)arg;
 	while(1){
-		if(philosopher_num<4){
+		if(philosopher_num<4){ //0~3 philosopher들은 자신의 좌, 우 순서대로 fork를 픽업하며 한 방향으로 진행된다.
 			pickup(philosopher_num);
 			printf("philosopher %d picks up the fork %d\n",philosopher_num, philosopher_num);
 			pickup(philosopher_num+1);
 			printf("philosopher %d picks up the fork %d\n",philosopher_num, (philosopher_num+1)%NUM);
-		}else{
+		}else{ // 4 philosopher마저 좌, 우순으로 선택하면 순환 대기가 생기기 때문에 4번만 순서를 반대로 하여 순환 대기가 생기지 않도록 하였다.
 			pickup(philosopher_num+1);
 			printf("philosopher %d picks up the fork %d\n",philosopher_num, (philosopher_num+1)%NUM);
 			pickup(philosopher_num);
