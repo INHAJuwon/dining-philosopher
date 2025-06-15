@@ -4,7 +4,7 @@
 #define NUM 5
 
 sem_t forks[NUM];
-sem_t once;
+sem_t once; // 한 번에 좌, 우 fork를 같이 들기 위한 semaphore
 
 void pickup(int philosopher_num){
 	sem_wait(&forks[philosopher_num%NUM]);
@@ -26,12 +26,12 @@ void* philosopher(void* arg){
 	int philosopher_num;
 	philosopher_num=(unsigned long int)arg;
 	while(1){
-		sem_wait(&once);
+		sem_wait(&once); // deadlock을 피하기 위해 lock 하고 한 번에 양 fork를 동시에 pickup, 점유,대기를 막을 수는 있지만 concurrency를 해친다.
 		pickup(philosopher_num);
 		printf("philosopher %d picks up the fork %d\n",philosopher_num, philosopher_num);
 		pickup(philosopher_num+1);
 		printf("philosopher %d picks up the fork %d\n",philosopher_num, (philosopher_num+1)%NUM);
-		sem_post(&once);
+		sem_post(&once); // 이미 두 fork를 픽업하여 점유, 대기 상태가 걸릴 리는 없으니 unlock
 		eating(philosopher_num);
 		putdown(philosopher_num+1);
 		printf("philosopher %d puts down the fork %d\n",philosopher_num, (philosopher_num+1)%NUM);
